@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -20,7 +21,8 @@ public class Worm : MonoBehaviour
 
     public GameObject WormBodyPart;
     private List<WormBodyPart> _bodyParts = new List<WormBodyPart>();
-    private int _startingWormyBodyPartCount = 10;
+    private int _startingWormyBodyPartCount = 15;
+    private int _requiredPotatoPiecesForGrowth = 60;
 
     private void Awake()
     {
@@ -62,19 +64,37 @@ public class Worm : MonoBehaviour
             transform.position += velocity;
         }
 
+
+        UpdateBodyPartLocations();
         ReduceLifetime();
+    }
+
+    private void UpdateBodyPartLocations()
+    {
+        foreach(var bodyPart in _bodyParts)
+        {
+            bodyPart.OnLeaderUpdated();
+        }
     }
 
     private void EatPiece(PotatoPiece piece)
     {
         _piecesEaten += 1;
+        Debug.Log($"pieces eaten: {_piecesEaten}");
+
         piece.BecomeEaten();
         AddLifetime();
+
+        if(_piecesEaten % _requiredPotatoPiecesForGrowth == 0)
+        {
+            ExpandWormLength();
+        }
     }
 
     private void ExpandWormLength()
     {
-        var go = Instantiate(WormBodyPart, transform.position, Quaternion.identity);
+        var spawnPosition = _bodyParts.Any() ? _bodyParts.Last().transform.position : transform.position;
+        var go = Instantiate(WormBodyPart, spawnPosition, Quaternion.identity);
         var bodyPart = go.GetComponent<WormBodyPart>();
         _bodyParts.Add(bodyPart);
 
