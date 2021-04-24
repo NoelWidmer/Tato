@@ -1,0 +1,33 @@
+{
+    "name": "TatoInputActions",
+    "maps": [
+        {
+            "name": "Default",
+            "id": "54195521-d744-4eb8-a106-51d04141b8f5",
+            "actions": [
+                {
+                    "name": "Move",
+                    "type": "Value",
+                    "id": "e71cc057-e0b5-4c00-8dad-d257e10a91e3",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "7e07bc9d-d07b-4e31-a179-9fafdd97c4e4",
+                    "path": "<Mouse>/delta",
+                    "interactions": "",
+                    "processors": "NormalizeVector2",
+                    "groups": "",
+                    "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": []
+}
