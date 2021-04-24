@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Worm : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class Worm : MonoBehaviour
     private Vector2 _movementDirection;
     private Vector3 _movementDirection3D => new Vector3(_movementDirection.x, _movementDirection.y, 0f);
     private int _piecesEaten;
+
+    private static readonly float _maxLifetime = 5f;
+    private static readonly float _lifetimeGainedByPiece = .05f;
+    private float _remainingLifetime = _maxLifetime;
 
     private void Awake()
     {
@@ -39,6 +44,7 @@ public class Worm : MonoBehaviour
             {
                 _piecesEaten += 1;
                 piece.BecomeEaten();
+                AddLifetime();
             }
         }
 
@@ -46,6 +52,36 @@ public class Worm : MonoBehaviour
         {
             transform.position += velocity;
         }
+
+        ReduceLifetime();
+    }
+
+    private void AddLifetime()
+    {
+        _remainingLifetime += _lifetimeGainedByPiece;
+
+        if(_remainingLifetime > _maxLifetime)
+        {
+            _remainingLifetime = _maxLifetime;
+        }
+    }
+
+    private void ReduceLifetime()
+    {
+        _remainingLifetime -= Time.deltaTime;
+        Debug.Log("lifetime: " + _remainingLifetime);
+
+        if(_remainingLifetime <= 0f)
+        {
+            Die();
+        }
+    }
+
+    private void Die()
+    {
+        Debug.Log("died");
+        Destroy(gameObject);
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
     }
 
     private void OnDrawGizmos()

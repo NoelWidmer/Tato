@@ -44,7 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eae066a5614bece4fb8431a33842a7a8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  IsEaten: 0
 --- !u!1 &6311074072047736957
 GameObject:
   m_ObjectHideFlags: 0
@@ -114,8 +113,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 40519493
+  m_SortingLayer: 1
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b1f0e5163da61604689435cecd2b2759, type: 3}
   m_Color: {r: 1, g: 0.75032014, b: 0.36477983, a: 1}
