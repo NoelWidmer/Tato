@@ -15,6 +15,7 @@ public class Worm : MonoBehaviour
     private static readonly float _maxLifetime = 5f;
     private static readonly float _lifetimeGainedByPiece = .05f;
     private float _remainingLifetime = _maxLifetime;
+    public float RemainingLifetimeFraction => 1f / _maxLifetime * _remainingLifetime;
 
     private void Awake()
     {
