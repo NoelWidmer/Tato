@@ -44,6 +44,9 @@ TagManager:
   - name: EatenPotatoPiece
     uniqueID: 40519493
     locked: 0
-  - name: Worm
+  - name: WormBody
     uniqueID: 3999397699
+    locked: 0
+  - name: WormHead
+    uniqueID: 2710778581
     locked: 0

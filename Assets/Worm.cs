@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -17,12 +18,21 @@ public class Worm : MonoBehaviour
     private float _remainingLifetime = _maxLifetime;
     public float RemainingLifetimeFraction => 1f / _maxLifetime * _remainingLifetime;
 
+    public GameObject WormBodyPart;
+    private List<WormBodyPart> _bodyParts = new List<WormBodyPart>();
+    private int _startingWormyBodyPartCount = 10;
+
     private void Awake()
     {
         _input = new TatoInputActions();
         _input.Enable();
 
         Cursor.visible = false;
+
+        for(var i = 0; i < _startingWormyBodyPartCount; i++)
+        {
+            ExpandWormLength();
+        }
     }
 
     private void Update()
@@ -43,9 +53,7 @@ public class Worm : MonoBehaviour
 
             if(piece.IsEaten == false)
             {
-                _piecesEaten += 1;
-                piece.BecomeEaten();
-                AddLifetime();
+                EatPiece(piece);
             }
         }
 
@@ -55,6 +63,29 @@ public class Worm : MonoBehaviour
         }
 
         ReduceLifetime();
+    }
+
+    private void EatPiece(PotatoPiece piece)
+    {
+        _piecesEaten += 1;
+        piece.BecomeEaten();
+        AddLifetime();
+    }
+
+    private void ExpandWormLength()
+    {
+        var go = Instantiate(WormBodyPart, transform.position, Quaternion.identity);
+        var bodyPart = go.GetComponent<WormBodyPart>();
+        _bodyParts.Add(bodyPart);
+
+        if(_bodyParts.Count == 1)
+        {
+            bodyPart.Follow(transform);
+        }
+        else
+        {
+            bodyPart.Follow(_bodyParts[_bodyParts.Count - 2].Transform);
+        }
     }
 
     private void AddLifetime()
@@ -70,7 +101,6 @@ public class Worm : MonoBehaviour
     private void ReduceLifetime()
     {
         _remainingLifetime -= Time.deltaTime;
-        Debug.Log("lifetime: " + _remainingLifetime);
 
         if(_remainingLifetime <= 0f)
         {
