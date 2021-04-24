@@ -3,6 +3,7 @@ using UnityEngine;
 public class Potato : MonoBehaviour
 {
     public GameObject PotatoPiecePrefab;
+    public GameObject PotatoPiecesMask;
 
     private PolygonCollider2D _collider;
 
@@ -41,7 +42,8 @@ public class Potato : MonoBehaviour
 
         if(_collider.OverlapPoint(position))
         {
-            Instantiate(PotatoPiecePrefab, position, Quaternion.identity, transform);
+            var go = Instantiate(PotatoPiecePrefab, position, Quaternion.identity, transform);
+            //var potatoPiece = go.GetComponentInChildren<SpriteRenderer>().renderingLayerMask = PotatoPiecesMask;
         }            
     }
 }
