@@ -23,7 +23,7 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
                     ""type"": ""Value"",
                     ""id"": ""e71cc057-e0b5-4c00-8dad-d257e10a91e3"",
                     ""expectedControlType"": ""Vector2"",
-                    ""processors"": """",
+                    ""processors"": ""StickDeadzone,NormalizeVector2"",
                     ""interactions"": """"
                 }
             ],
@@ -33,7 +33,18 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
                     ""id"": ""7e07bc9d-d07b-4e31-a179-9fafdd97c4e4"",
                     ""path"": ""<Mouse>/delta"",
                     ""interactions"": """",
-                    ""processors"": ""NormalizeVector2"",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bbe13480-7dc2-461a-9d6d-8e5da19637a5"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Move"",
                     ""isComposite"": false,

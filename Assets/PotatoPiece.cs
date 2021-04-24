@@ -7,6 +7,8 @@ public class PotatoPiece : MonoBehaviour
 
     public void Awake()
     {
+        enabled = false;
+
         var collider = gameObject.AddComponent<CircleCollider2D>();
         collider.radius = Radius;
     }
