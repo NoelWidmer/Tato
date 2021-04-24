@@ -6,6 +6,7 @@ using UnityEngine.SceneManagement;
 public class Worm : MonoBehaviour
 {
     public LayerMask PotatoPieceLayerMask;
+    public LayerMask WormLayerMask;
 
     private TatoInputActions _input;
     private bool _startedMoving;
@@ -49,6 +50,33 @@ public class Worm : MonoBehaviour
 
         var velocity = _movementDirection3D * _speed * Time.deltaTime;
 
+        EatOverlapingPotatoPieces(velocity);
+
+        if(IsEatingSelf(velocity))
+        {
+            Debug.Log("ate self");
+            Move(velocity);
+            Die();
+            return;
+        }
+
+        if(_startedMoving)
+        {
+            Move(velocity);
+        }
+
+        UpdateBodyPartLocations();
+        ReduceLifetime();
+    }
+
+    private void Move(Vector3 velocity)
+    {
+        transform.position += velocity;
+        transform.up = -velocity.normalized;
+    }
+
+    private void EatOverlapingPotatoPieces(Vector3 velocity)
+    {
         foreach(var hit in Physics2D.RaycastAll(transform.position, velocity.normalized, velocity.magnitude, PotatoPieceLayerMask))
         {
             var piece = hit.collider.GetComponent<PotatoPiece>();
@@ -58,15 +86,12 @@ public class Worm : MonoBehaviour
                 EatPiece(piece);
             }
         }
+    }
 
-        if(_startedMoving)
-        {
-            transform.position += velocity;
-        }
-
-
-        UpdateBodyPartLocations();
-        ReduceLifetime();
+    private bool IsEatingSelf(Vector3 velocity)
+    {
+        var hits = Physics2D.RaycastAll(transform.position, velocity.normalized, velocity.magnitude, WormLayerMask);
+        return hits.Any();
     }
 
     private void UpdateBodyPartLocations()
@@ -80,8 +105,6 @@ public class Worm : MonoBehaviour
     private void EatPiece(PotatoPiece piece)
     {
         _piecesEaten += 1;
-        Debug.Log($"pieces eaten: {_piecesEaten}");
-
         piece.BecomeEaten();
         AddLifetime();
 

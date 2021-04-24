@@ -29,6 +29,6 @@ public class PotatoPiece : MonoBehaviour
     private void OnDrawGizmos()
     {
         Gizmos.color = IsEaten ? Color.red : Color.green;
-        Gizmos.DrawWireSphere(transform.position, Radius);
+        //Gizmos.DrawWireSphere(transform.position, Radius);
     }
 }
