@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class Worm : MonoBehaviour
 {
-    public LayerMask _potatoLayerMask;
+    public LayerMask PotatoPieceLayerMask;
 
     private TatoInputActions _input;
     private bool _startedMoving;
-    private float _speed = 5f;
+    private float _speed = 2f;
     private Vector2 _movementDirection;
     private Vector3 _movementDirection3D => new Vector3(_movementDirection.x, _movementDirection.y, 0f);
     private int _piecesEaten;
@@ -31,14 +31,14 @@ public class Worm : MonoBehaviour
 
         var velocity = _movementDirection3D * _speed * Time.deltaTime;
 
-        foreach(var hit in Physics2D.RaycastAll(transform.position, velocity.normalized, velocity.magnitude, _potatoLayerMask))
+        foreach(var hit in Physics2D.RaycastAll(transform.position, velocity.normalized, velocity.magnitude, PotatoPieceLayerMask))
         {
             var piece = hit.collider.GetComponent<PotatoPiece>();
 
             if(piece.IsEaten == false)
             {
                 _piecesEaten += 1;
-                piece.IsEaten = true;
+                piece.BecomeEaten();
             }
         }
 

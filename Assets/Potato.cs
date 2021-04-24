@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Potato : MonoBehaviour
@@ -29,7 +27,7 @@ public class Potato : MonoBehaviour
 
     private void GeneratePotatoPiece(int x, int y)
     {
-        var position = new Vector2(x * PotatoPiece.Radius * 2, y * .0875f);
+        var position = new Vector2(x * PotatoPiece.Radius, y * PotatoPiece.Radius);
 
         // add offset
         var offset = new Vector2(-4f, -3.5f);
