@@ -5,78 +5,79 @@ using UnityEngine.SceneManagement;
 
 public class Worm : MonoBehaviour
 {
+    // inspector
     public LayerMask PotatoPieceLayerMask;
     public LayerMask WormLayerMask;
 
+    // movement
     private TatoInputActions _input;
-    private bool _startedMoving;
+    private bool _wasInputProvidedAtLeastOnce;
     private float _speed = 2f;
-    private Vector2 _movementDirection2D;
-    private Vector3 _movementDirection3D => new Vector3(_movementDirection2D.x, _movementDirection2D.y, 0f);
-    private int _piecesEaten;
+    private Vector3 _movementDirection;
 
-    private static readonly float _maxLifetime = 5f;
-    private static readonly float _lifetimeGainedByPiece = .05f;
-    private float _remainingLifetime = _maxLifetime;
+    //lifetime
     public float RemainingLifetimeFraction => 1f / _maxLifetime * _remainingLifetime;
+    private static readonly float _maxLifetime = 5f;
+    private static readonly float _lifetimeGainedByPiece = .03f;
+    private float _remainingLifetime = _maxLifetime;
 
-    public GameObject WormBodyPart;
+    // body parts
+    public GameObject WormBodyPartPrefab;
     private List<WormBodyPart> _bodyParts = new List<WormBodyPart>();
-    private int _startingWormyBodyPartCount = 15;
+    private Transform _bodyPartParent;
+    private int _initialBodyPartCount = 15;
     private int _requiredPotatoPiecesForGrowth = 60;
-
-    private float _timeSinceRoundStart;
+    private int _piecesEaten;
 
     private void Awake()
     {
         _input = new TatoInputActions();
         _input.Enable();
 
-        Cursor.visible = false;
+        //Cursor.visible = false;
 
-        for(var i = 0; i < _startingWormyBodyPartCount; i++)
+        for(var i = 0; i < _initialBodyPartCount; i++)
         {
-            ExpandWormLength();
+            Grow();
         }
     }
 
     private void Update()
     {
-        var input = _input.Default.Move.ReadValue<Vector2>();
+        HandleInput();
 
-        if(input.magnitude > .5f)
+        if(_wasInputProvidedAtLeastOnce)
         {
-            _startedMoving = true;
-            _movementDirection2D = input.normalized;
-        }
-
-        if(_startedMoving)
-        {
-            _timeSinceRoundStart += Time.deltaTime;
-
-            var velocity = _movementDirection3D * _speed * Time.deltaTime;
+            var velocity = _movementDirection * _speed * Time.deltaTime;
 
             EatOverlapingPotatoPieces(velocity);
 
             if(IsEatingSelf(velocity))
             {
-                Debug.Log("ate self");
                 Move(velocity);
                 Die();
-                return;
             }
-
-            Move(velocity);
-
-            UpdateBodyPartLocations();
-            ReduceLifetime();
+            else if(HasLifetimeLeft() == false)
+            {
+                Move(velocity);
+                Die();
+            }
+            else
+            {
+                Move(velocity);
+            }
         }
     }
 
-    private void Move(Vector3 velocity)
+    private void HandleInput()
     {
-        transform.position += velocity;
-        transform.up = -velocity.normalized;
+        var input = _input.Default.Move.ReadValue<Vector2>();
+
+        if(input.magnitude > 0f)
+        {
+            _wasInputProvidedAtLeastOnce = true;
+            _movementDirection = new Vector3(input.x, input.y, 0f).normalized;
+        }
     }
 
     private void EatOverlapingPotatoPieces(Vector3 velocity)
@@ -103,22 +104,51 @@ public class Worm : MonoBehaviour
 
     private bool IsEatingSelf(Vector3 velocity)
     {
-        if(_timeSinceRoundStart < 1f)
+        var raycastSettings = GetRaycastSettings(velocity);
+
+        var hit = Physics2D.Raycast(
+            raycastSettings.RaycastOrigin, 
+            raycastSettings.raycastVector.normalized, 
+            raycastSettings.raycastVector.magnitude, 
+            WormLayerMask);
+
+        if(hit.collider == null)
         {
             return false;
         }
+        else
+        {
+            var vectorToBodyPart = hit.collider.transform.position - transform.position;
 
-        var raycastSettings = GetRaycastSettings(velocity);
-
-        var hit = Physics2D.Raycast(raycastSettings.RaycastOrigin, raycastSettings.raycastVector.normalized, raycastSettings.raycastVector.magnitude, WormLayerMask);
-        return hit.collider != null;
+            if(vectorToBodyPart.magnitude == 0f)
+            {
+                // we are exactly on the body part.
+                // this shouldn't happen.
+                // maybe it could at the beginning of a stage?
+                // let's just handle this in favour of player.
+                return false;
+            }
+            else
+            {
+                return Vector3.Dot(velocity.normalized, vectorToBodyPart.normalized) > 0f;
+            }
+        }
     }
 
-    private void UpdateBodyPartLocations()
+    private bool HasLifetimeLeft()
     {
+        _remainingLifetime -= Time.deltaTime;
+        return _remainingLifetime > 0f;
+    }
+
+    private void Move(Vector3 velocity)
+    {
+        transform.position += velocity;
+        transform.up = -velocity.normalized;
+
         foreach(var bodyPart in _bodyParts)
         {
-            bodyPart.OnLeaderUpdated();
+            bodyPart.OnLeaderPositionUpdated();
         }
     }
 
@@ -130,25 +160,30 @@ public class Worm : MonoBehaviour
 
         if(_piecesEaten % _requiredPotatoPiecesForGrowth == 0)
         {
-            ExpandWormLength();
+            Grow();
         }
     }
 
-    private void ExpandWormLength()
+    private void Grow()
     {
-        var spawnPosition = _bodyParts.Any() ? _bodyParts.Last().transform.position : transform.position;
-        var go = Instantiate(WormBodyPart, spawnPosition, Quaternion.identity);
-        var bodyPart = go.GetComponent<WormBodyPart>();
-        _bodyParts.Add(bodyPart);
+        Transform leader;
 
-        if(_bodyParts.Count == 1)
+        if(_bodyParts.Any())
         {
-            bodyPart.Follow(transform);
+            leader = _bodyParts.Last().transform;
         }
         else
         {
-            bodyPart.Follow(_bodyParts[_bodyParts.Count - 2].Transform);
+            _bodyPartParent = new GameObject("BodyParts").transform;
+            leader = transform;
         }
+
+        var go = Instantiate(WormBodyPartPrefab, leader.position, Quaternion.identity, _bodyPartParent);
+        go.name = _bodyParts.Count.ToString();
+
+        var bodyPart = go.GetComponent<WormBodyPart>();
+        bodyPart.Follow(leader);
+        _bodyParts.Add(bodyPart);
     }
 
     private void AddLifetime()
@@ -161,25 +196,14 @@ public class Worm : MonoBehaviour
         }
     }
 
-    private void ReduceLifetime()
-    {
-        _remainingLifetime -= Time.deltaTime;
-
-        if(_remainingLifetime <= 0f)
-        {
-            Die();
-        }
-    }
-
     private void Die()
     {
-        Debug.Log("died");
         Destroy(gameObject);
         SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
     }
 
     private void OnDrawGizmos()
     {
-        Gizmos.DrawLine(transform.position, transform.position + _movementDirection3D);
+        Gizmos.DrawLine(transform.position, transform.position + _movementDirection);
     }
 }

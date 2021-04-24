@@ -42,8 +42,7 @@ public class Potato : MonoBehaviour
 
         if(_collider.OverlapPoint(position))
         {
-            var go = Instantiate(PotatoPiecePrefab, position, Quaternion.identity, transform);
-            //var potatoPiece = go.GetComponentInChildren<SpriteRenderer>().renderingLayerMask = PotatoPiecesMask;
+            Instantiate(PotatoPiecePrefab, position, Quaternion.identity, transform);
         }            
     }
 }

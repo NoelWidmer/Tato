@@ -10,8 +10,6 @@ public class PotatoPiece : MonoBehaviour
 
     public void Awake()
     {
-        enabled = false;
-
         _sr = GetComponentInChildren<SpriteRenderer>();
         _sr.enabled = false;
 
@@ -24,11 +22,5 @@ public class PotatoPiece : MonoBehaviour
         IsEaten = true;
         _sr.enabled = true;
         _collider.enabled = false;
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = IsEaten ? Color.red : Color.green;
-        //Gizmos.DrawWireSphere(transform.position, Radius);
     }
 }

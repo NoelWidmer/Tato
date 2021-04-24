@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,8 +12,7 @@ public class TatoUserInterface : MonoBehaviour
         _slider = FindObjectOfType<Slider>();
     }
 
-    // Update is called once per frame
-    private void Update()
+    private void LateUpdate()
     {
         _slider.value = _worm.RemainingLifetimeFraction;
     }

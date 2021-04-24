@@ -3,12 +3,10 @@ using UnityEngine;
 
 public class WormBodyPart : MonoBehaviour
 {
-    public Transform Transform => transform;
-
     private Transform _leader;
 
     private Queue<(float Time, Vector3 Position)> _leaderPositions = new Queue<(float Time, Vector3 Position)>();
-    private static readonly float delay = .05f;
+    private static readonly float delay = .025f;
 
     public void Follow(Transform leader)
     {
@@ -16,7 +14,7 @@ public class WormBodyPart : MonoBehaviour
         _leaderPositions.Enqueue((Time.time, _leader.position));
     }
 
-    public void OnLeaderUpdated()
+    public void OnLeaderPositionUpdated()
     {
         _leaderPositions.Enqueue((Time.time, _leader.position));
 
