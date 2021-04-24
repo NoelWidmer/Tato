@@ -11,8 +11,8 @@ public class Worm : MonoBehaviour
     private TatoInputActions _input;
     private bool _startedMoving;
     private float _speed = 2f;
-    private Vector2 _movementDirection;
-    private Vector3 _movementDirection3D => new Vector3(_movementDirection.x, _movementDirection.y, 0f);
+    private Vector2 _movementDirection2D;
+    private Vector3 _movementDirection3D => new Vector3(_movementDirection2D.x, _movementDirection2D.y, 0f);
     private int _piecesEaten;
 
     private static readonly float _maxLifetime = 5f;
@@ -24,6 +24,8 @@ public class Worm : MonoBehaviour
     private List<WormBodyPart> _bodyParts = new List<WormBodyPart>();
     private int _startingWormyBodyPartCount = 15;
     private int _requiredPotatoPiecesForGrowth = 60;
+
+    private float _timeSinceRoundStart;
 
     private void Awake()
     {
@@ -45,28 +47,30 @@ public class Worm : MonoBehaviour
         if(input.magnitude > .5f)
         {
             _startedMoving = true;
-            _movementDirection = input.normalized;
-        }
-
-        var velocity = _movementDirection3D * _speed * Time.deltaTime;
-
-        EatOverlapingPotatoPieces(velocity);
-
-        if(IsEatingSelf(velocity))
-        {
-            Debug.Log("ate self");
-            Move(velocity);
-            Die();
-            return;
+            _movementDirection2D = input.normalized;
         }
 
         if(_startedMoving)
         {
-            Move(velocity);
-        }
+            _timeSinceRoundStart += Time.deltaTime;
 
-        UpdateBodyPartLocations();
-        ReduceLifetime();
+            var velocity = _movementDirection3D * _speed * Time.deltaTime;
+
+            EatOverlapingPotatoPieces(velocity);
+
+            if(IsEatingSelf(velocity))
+            {
+                Debug.Log("ate self");
+                Move(velocity);
+                Die();
+                return;
+            }
+
+            Move(velocity);
+
+            UpdateBodyPartLocations();
+            ReduceLifetime();
+        }
     }
 
     private void Move(Vector3 velocity)
@@ -77,7 +81,9 @@ public class Worm : MonoBehaviour
 
     private void EatOverlapingPotatoPieces(Vector3 velocity)
     {
-        foreach(var hit in Physics2D.RaycastAll(transform.position, velocity.normalized, velocity.magnitude, PotatoPieceLayerMask))
+        var raycastSettings = GetRaycastSettings(velocity);
+
+        foreach(var hit in Physics2D.RaycastAll(raycastSettings.RaycastOrigin, raycastSettings.raycastVector.normalized, raycastSettings.raycastVector.magnitude, PotatoPieceLayerMask))
         {
             var piece = hit.collider.GetComponent<PotatoPiece>();
 
@@ -88,10 +94,24 @@ public class Worm : MonoBehaviour
         }
     }
 
+    private (Vector3 RaycastOrigin, Vector3 raycastVector) GetRaycastSettings(Vector3 velocity)
+    {
+        var origin = transform.position + velocity.normalized * .15f;
+        var vector = velocity.normalized * (velocity.magnitude - .15f);
+        return (origin, vector);
+    }
+
     private bool IsEatingSelf(Vector3 velocity)
     {
-        var hits = Physics2D.RaycastAll(transform.position, velocity.normalized, velocity.magnitude, WormLayerMask);
-        return hits.Any();
+        if(_timeSinceRoundStart < 1f)
+        {
+            return false;
+        }
+
+        var raycastSettings = GetRaycastSettings(velocity);
+
+        var hit = Physics2D.Raycast(raycastSettings.RaycastOrigin, raycastSettings.raycastVector.normalized, raycastSettings.raycastVector.magnitude, WormLayerMask);
+        return hit.collider != null;
     }
 
     private void UpdateBodyPartLocations()
