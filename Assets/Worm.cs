@@ -139,7 +139,12 @@ public class Worm : MonoBehaviour
     {
         var input = _input.Default.Move.ReadValue<Vector2>();
 
-        if(input.magnitude > 0f)
+        if (Application.isEditor == false)
+        {
+            input *= new Vector2(1f, -1f);
+        }
+
+        if (input.magnitude > 0f)
         {
             _wasInputProvidedAtLeastOnce = true;
             _movementDirection = new Vector3(input.x, input.y, 0f).normalized;
@@ -300,7 +305,7 @@ public class Worm : MonoBehaviour
         {
             case DeathReason.Lifetime:
                 info = "Tato starved  :(";
-                hint = "Make sure to continuously feed Tato tasty potato.";
+                hint = "Keep an eye on the hunger meter and make sure to continuously feed Tato fresh potato.";
                 break;
             case DeathReason.Suicide:
                 info = "Tato got hurt :(";
