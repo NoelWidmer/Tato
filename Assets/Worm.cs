@@ -32,6 +32,7 @@ public class Worm : MonoBehaviour
     private int _piecesEaten;
 
     // stats
+    private float _timePlaying;
     public int Depth { get; private set; } = 1;
     public int Stars { get; private set; } = 0;
 
@@ -54,6 +55,8 @@ public class Worm : MonoBehaviour
 
         if(_wasInputProvidedAtLeastOnce)
         {
+            _timePlaying += Time.deltaTime;
+
             var velocity = _movementDirection * _speed * Time.deltaTime;
             var hits = GetHits(velocity);
 
@@ -232,7 +235,7 @@ public class Worm : MonoBehaviour
         {
             case DeathReason.Lifetime:
                 info = "You've let Tato starve  ;(";
-                hint = "Hint: Continuously feed Tato with some potato.";
+                hint = "Hint: Continuously feed Tato tasty potato.";
                 break;
             case DeathReason.Suicide:
                 info = "You've let Tato hurt herself  ;(";
@@ -247,8 +250,8 @@ public class Worm : MonoBehaviour
             hint, 
             Stars, 
             Depth, 
-            _bodyParts.Count, 
-            Time.time
+            _bodyParts.Count,
+            _timePlaying
             );
 
         GameplayCanvas.gameObject.SetActive(false);
