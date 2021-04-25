@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Worm : MonoBehaviour
 {
+    private Potato _potato;
+
     // inspector
     public LayerMask WormObstacleLayerMask;
     public Canvas GameplayCanvas;
@@ -17,7 +19,9 @@ public class Worm : MonoBehaviour
     // movement
     private TatoInputActions _input;
     private bool _wasInputProvidedAtLeastOnce;
-    private float _speed = 2f;
+    private static readonly float _normalSpeed = 2f;
+    private static readonly float _wetSpeed = 1f;
+    private float _speed;
     private Vector3 _movementDirection;
 
     //lifetime
@@ -46,6 +50,8 @@ public class Worm : MonoBehaviour
 
     private void Awake()
     {
+        _potato = FindObjectOfType<Potato>();
+
         _input = new TatoInputActions();
         _input.Enable();
 
@@ -78,6 +84,7 @@ public class Worm : MonoBehaviour
 
                 EatOverlapingPotatoPieces(hits);
                 CollectStars(hits);
+                SetSpeed(hits);
 
                 var exitHits = GetHitsByTag(hits, "Exit");
 
@@ -172,6 +179,23 @@ public class Worm : MonoBehaviour
             Destroy(starHit.collider.gameObject);
             var potato = FindObjectOfType<Potato>();
             potato.OnStarCollected();
+        }
+    }
+
+    private void SetSpeed(RaycastHit2D[] hits)
+    {
+        if(_potato.IsInsidePotato(transform.position) == false)
+        {
+            if(hits.Any(hit => hit.collider.tag == "Drop"))
+            {
+                _speed = _wetSpeed;
+                Debug.Log("wet");
+            }
+            else
+            {
+                _speed = _normalSpeed;
+                Debug.Log("normal");
+            }
         }
     }
 

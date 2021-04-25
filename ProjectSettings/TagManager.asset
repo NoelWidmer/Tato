@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Exit
   - Star
+  - Drop
   layers:
   - Default
   - TransparentFX
