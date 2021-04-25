@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Cloud : MonoBehaviour
 {
-    private static readonly float _dropsPerSecond = .2f;
+    private static readonly float _dropsPerSecond = .5f;
 
     public GameObject DropPrefab;
 
