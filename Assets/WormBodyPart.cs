@@ -6,7 +6,7 @@ public class WormBodyPart : MonoBehaviour
     private Transform _leader;
 
     private Queue<(float Time, Vector3 Position)> _leaderPositions = new Queue<(float Time, Vector3 Position)>();
-    private static readonly float delay = .025f;
+    private static readonly float delay = .1f;
 
     public void Follow(Transform leader)
     {

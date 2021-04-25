@@ -17,19 +17,20 @@ public class Worm : MonoBehaviour
     //lifetime
     public float RemainingLifetimeFraction => 1f / _maxLifetime * _remainingLifetime;
     private static readonly float _maxLifetime = 5f;
-    private static readonly float _lifetimeGainedByPiece = .03f;
+    private static readonly float _lifetimeGainedByPiece = .04f;
     private float _remainingLifetime = _maxLifetime;
 
     // body parts
     public GameObject WormBodyPartPrefab;
     private List<WormBodyPart> _bodyParts = new List<WormBodyPart>();
     private Transform _bodyPartParent;
-    private int _initialBodyPartCount = 15;
+    private int _initialBodyPartCount = 5;
     private int _requiredPotatoPiecesForGrowth = 60;
     private int _piecesEaten;
 
-    // depth
+    // stats
     public int Depth { get; private set; } = 1;
+    public int Stars { get; private set; } = 0;
 
     private void Awake()
     {
@@ -54,11 +55,13 @@ public class Worm : MonoBehaviour
             var hits = GetHits(velocity);
 
             EatOverlapingPotatoPieces(hits);
+            CollectStars(hits);
 
-            var exitHit = HasTouchedExit(hits);
-            if(exitHit.HasValue)
+            var exitHits = GetHitsByTag(hits, "Exit");
+
+            if(exitHits.Any())
             {
-                Destroy(exitHit.Value.collider.gameObject);
+                Destroy(exitHits.First().collider.gameObject);
                 Depth += 1;
                 var potato = FindObjectOfType<Potato>();
                 potato.OnExited();
@@ -117,9 +120,20 @@ public class Worm : MonoBehaviour
         }
     }
 
-    private RaycastHit2D? HasTouchedExit(RaycastHit2D[] hits)
+    private void CollectStars(RaycastHit2D[] hits)
     {
-        return hits.Select(hit => (RaycastHit2D?)hit).FirstOrDefault(hit => hit.Value.collider.tag == "Exit");
+        foreach(var starHit in GetHitsByTag(hits, "Star"))
+        {
+            Stars += 1;
+            Destroy(starHit.collider.gameObject);
+            var potato = FindObjectOfType<Potato>();
+            potato.OnStarCollected();
+        }
+    }
+
+    private RaycastHit2D[] GetHitsByTag(RaycastHit2D[] hits, string tag)
+    {
+        return hits.Where(hit => hit.collider.tag == tag).ToArray();
     }
 
     private bool IsEatingSelf(RaycastHit2D[] hits, Vector3 velocity)

@@ -1077,7 +1077,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PotatoPiecePrefab: {fileID: 6311074071123278049, guid: bb94960768afd974796bec8833e74b5f, type: 3}
   ExitPrefab: {fileID: 3387069366061729651, guid: 608932593cd42f747a81a9ee1de698dd, type: 3}
+  StarPrefab: {fileID: 2652253277341011512, guid: 1bdfa4fb124211d49af83d01e800082d, type: 3}
   ExitRadius: 2.51
+  StarRadius: 4.35
 --- !u!4 &1442939017
 Transform:
   m_ObjectHideFlags: 0

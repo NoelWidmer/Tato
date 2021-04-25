@@ -5,7 +5,9 @@ public class Potato : MonoBehaviour
 {
     public GameObject PotatoPiecePrefab;
     public GameObject ExitPrefab;
+    public GameObject StarPrefab;
     public float ExitRadius;
+    public float StarRadius;
 
     private PolygonCollider2D _collider;
     private List<PotatoPiece> _potatoPieces = new List<PotatoPiece>();
@@ -20,14 +22,7 @@ public class Potato : MonoBehaviour
     {
         GeneratePotatoPieces();
         SpawnExit();
-    }
-
-    private void SpawnExit()
-    {
-        var exitDirection = new Vector3(Random.value, Random.value, 0f).normalized;
-        var exitDistanceFromCenter = ExitRadius * Random.value;
-        var exitPosition = transform.position + exitDirection * exitDistanceFromCenter;
-        Instantiate(ExitPrefab, exitPosition, Quaternion.identity);
+        SpawnStar();
     }
 
     private void GeneratePotatoPieces()
@@ -62,7 +57,25 @@ public class Potato : MonoBehaviour
             var go = Instantiate(PotatoPiecePrefab, position, Quaternion.identity, transform);
             var potatoPiece = go.GetComponent<PotatoPiece>();
             _potatoPieces.Add(potatoPiece);
-        }            
+        }
+    }
+
+    private void SpawnExit()
+    {
+        var exitDirection = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0f).normalized;
+        var exitDistanceFromCenter = ExitRadius * Random.value;
+        var exitPosition = transform.position + exitDirection * exitDistanceFromCenter;
+        Instantiate(ExitPrefab, exitPosition, Quaternion.identity);
+    }
+
+    private void SpawnStar()
+    {
+        var starDirection = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0f).normalized;
+        var minDistance = ExitRadius;
+        var variableDistance = StarRadius - minDistance;
+        var starDistanceFromCenter = variableDistance * Random.value + minDistance;
+        var starPosition = transform.position + starDirection * starDistanceFromCenter;
+        Instantiate(StarPrefab, starPosition, Quaternion.identity);
     }
 
     public void OnExited()
@@ -78,9 +91,17 @@ public class Potato : MonoBehaviour
         SpawnExit();
     }
 
+    public void OnStarCollected()
+    {
+        SpawnStar();
+    }
+
     private void OnDrawGizmos()
     {
         Gizmos.color = Color.black;
         Gizmos.DrawWireSphere(transform.position, ExitRadius);
+
+        Gizmos.color = Color.yellow;
+        Gizmos.DrawWireSphere(transform.position, StarRadius);
     }
 }
