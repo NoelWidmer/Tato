@@ -184,17 +184,16 @@ public class Worm : MonoBehaviour
 
     private void SetSpeed(RaycastHit2D[] hits)
     {
-        if(_potato.IsInsidePotato(transform.position) == false)
+        if (_potato.IsInsidePotato(transform.position) == false)
         {
-            if(hits.Any(hit => hit.collider.tag == "Drop"))
+            if (hits.Any(hit => hit.collider.tag == "Drop"))
             {
                 _speed = _wetSpeed;
-            }
-            else
-            {
-                _speed = _normalSpeed;
+                return;
             }
         }
+
+        _speed = _normalSpeed;
     }
 
     private RaycastHit2D[] GetHitsByTag(RaycastHit2D[] hits, string tag)
