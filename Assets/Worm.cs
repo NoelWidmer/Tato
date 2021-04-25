@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Worm : MonoBehaviour
 {
@@ -14,6 +15,7 @@ public class Worm : MonoBehaviour
     public LayerMask WormObstacleLayerMask;
     public Canvas GameplayCanvas;
     public DeatchScreen DeathCanvas;
+    public Text Tutorial;
 
     // eyes
     public List<Transform> NormalEyes;
@@ -61,6 +63,15 @@ public class Worm : MonoBehaviour
 
         _potato = FindObjectOfType<Potato>();
         _gameState = FindObjectOfType<GameState>();
+
+        if (_gameState.UseController)
+        {
+            Tutorial.text = "Use the left stick to control Tato.";
+        }
+        else
+        {
+            Tutorial.text = "Left mouse click to make Tato follow your cursor.";
+        }
 
         _input = new TatoInputActions();
         _input.Enable();
@@ -145,30 +156,50 @@ public class Worm : MonoBehaviour
 
     private void HandleInput()
     {
-        Vector2 input;
-
         if (_gameState.UseController)
         {
-            input = _input.Default.Move.ReadValue<Vector2>();
+            var stickInput = _input.Default.Move.ReadValue<Vector2>();
 
-            if (Application.isEditor == false)
+            if (stickInput.magnitude > 0f)
             {
-                input *= new Vector2(1f, -1f);
+                EnableMovement();
+
+                if (Application.isEditor == false)
+                {
+                    // no idea why the built game has an inverted y axis -_-
+                    stickInput *= new Vector2(1f, -1f);
+                }
+
+                stickInput = stickInput.normalized;
+                _movementDirection = new Vector3(stickInput.x, stickInput.y, 0f).normalized;
             }
         }
         else
         {
-            var mousePosition = _input.Default.MoveMouse.ReadValue<Vector2>();
-            var worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
-            input = worldPosition - transform.position;
-            Debug.DrawLine(transform.position, transform.position + new Vector3(input.x, input.y, 0f));
-        }
+            if (_wasInputProvidedAtLeastOnce == false)
+            {
+                if (_input.Default.MouseStart.ReadValue<float>() != 0f)
+                {
+                    EnableMovement();
+                }
+            }
 
-        if (input.magnitude > 0f)
+            if (_wasInputProvidedAtLeastOnce)
+            {
+                var mousePosition = _input.Default.MoveMouse.ReadValue<Vector2>();
+                var mousePositionInWorld = Camera.main.ScreenToWorldPoint(mousePosition);
+                var vector = mousePositionInWorld - transform.position;
+                _movementDirection = new Vector3(vector.x, vector.y, 0f).normalized;
+            }
+        }
+    }
+
+    private void EnableMovement()
+    {
+        if (_wasInputProvidedAtLeastOnce == false)
         {
-            input = input.normalized;
             _wasInputProvidedAtLeastOnce = true;
-            _movementDirection = new Vector3(input.x, input.y, 0f).normalized;
+            Tutorial.gameObject.SetActive(false);
         }
     }
 

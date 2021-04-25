@@ -556,7 +556,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   UseController: 0
-  PersonalBest: 0
+  HighScore: 0
 --- !u!4 &487016311
 Transform:
   m_ObjectHideFlags: 0
@@ -1414,7 +1414,7 @@ GameObject:
   - component: {fileID: 1898801366}
   - component: {fileID: 1898801365}
   m_Layer: 0
-  m_Name: PotatoeWhole
+  m_Name: PotatoWhole
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

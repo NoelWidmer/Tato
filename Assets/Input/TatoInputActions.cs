@@ -33,6 +33,14 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": """",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""MouseStart"",
+                    ""type"": ""Button"",
+                    ""id"": ""c5a27d6b-9823-41ae-9193-ec90a822f87e"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -57,6 +65,17 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
                     ""action"": ""MoveMouse"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""13e1703f-ca36-4bd4-a803-465552bf29be"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MouseStart"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -67,6 +86,7 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
         m_Default = asset.FindActionMap("Default", throwIfNotFound: true);
         m_Default_Move = m_Default.FindAction("Move", throwIfNotFound: true);
         m_Default_MoveMouse = m_Default.FindAction("MoveMouse", throwIfNotFound: true);
+        m_Default_MouseStart = m_Default.FindAction("MouseStart", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -118,12 +138,14 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
     private IDefaultActions m_DefaultActionsCallbackInterface;
     private readonly InputAction m_Default_Move;
     private readonly InputAction m_Default_MoveMouse;
+    private readonly InputAction m_Default_MouseStart;
     public struct DefaultActions
     {
         private @TatoInputActions m_Wrapper;
         public DefaultActions(@TatoInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Default_Move;
         public InputAction @MoveMouse => m_Wrapper.m_Default_MoveMouse;
+        public InputAction @MouseStart => m_Wrapper.m_Default_MouseStart;
         public InputActionMap Get() { return m_Wrapper.m_Default; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -139,6 +161,9 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
                 @MoveMouse.started -= m_Wrapper.m_DefaultActionsCallbackInterface.OnMoveMouse;
                 @MoveMouse.performed -= m_Wrapper.m_DefaultActionsCallbackInterface.OnMoveMouse;
                 @MoveMouse.canceled -= m_Wrapper.m_DefaultActionsCallbackInterface.OnMoveMouse;
+                @MouseStart.started -= m_Wrapper.m_DefaultActionsCallbackInterface.OnMouseStart;
+                @MouseStart.performed -= m_Wrapper.m_DefaultActionsCallbackInterface.OnMouseStart;
+                @MouseStart.canceled -= m_Wrapper.m_DefaultActionsCallbackInterface.OnMouseStart;
             }
             m_Wrapper.m_DefaultActionsCallbackInterface = instance;
             if (instance != null)
@@ -149,6 +174,9 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
                 @MoveMouse.started += instance.OnMoveMouse;
                 @MoveMouse.performed += instance.OnMoveMouse;
                 @MoveMouse.canceled += instance.OnMoveMouse;
+                @MouseStart.started += instance.OnMouseStart;
+                @MouseStart.performed += instance.OnMouseStart;
+                @MouseStart.canceled += instance.OnMouseStart;
             }
         }
     }
@@ -157,5 +185,6 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
     {
         void OnMove(InputAction.CallbackContext context);
         void OnMoveMouse(InputAction.CallbackContext context);
+        void OnMouseStart(InputAction.CallbackContext context);
     }
 }
