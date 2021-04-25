@@ -8,6 +8,7 @@ public class Worm : MonoBehaviour
     public bool RemoveBehaviourOnPlay;
 
     private Potato _potato;
+    private GameState _gameState;
 
     // inspector
     public LayerMask WormObstacleLayerMask;
@@ -59,6 +60,7 @@ public class Worm : MonoBehaviour
         }
 
         _potato = FindObjectOfType<Potato>();
+        _gameState = FindObjectOfType<GameState>();
 
         _input = new TatoInputActions();
         _input.Enable();
@@ -149,9 +151,16 @@ public class Worm : MonoBehaviour
     {
         Vector2 input;
 
-        var stickInput = _input.Default.Move.ReadValue<Vector2>();
+        if (_gameState.UseController)
+        {
+            input = _input.Default.Move.ReadValue<Vector2>();
 
-        if (stickInput.magnitude == 0)
+            if (Application.isEditor == false)
+            {
+                input *= new Vector2(1f, -1f);
+            }
+        }
+        else
         {
             var mousePosition = _input.Default.MoveMouse.ReadValue<Vector2>();
             var distance = Vector2.Distance(mousePosition, _lastMousePosition);
@@ -162,25 +171,14 @@ public class Worm : MonoBehaviour
             }
             else
             {
-                Debug.Log(distance);
                 input = (mousePosition - _lastMousePosition).normalized;
             }
 
             _lastMousePosition = mousePosition;
         }
-        else
-        {
-            input = stickInput;
-        }
 
         if (input.magnitude > 0f)
         {
-
-            if (Application.isEditor == false)
-            {
-                input *= new Vector2(1f, -1f);
-            }
-
             input = input.normalized;
             _wasInputProvidedAtLeastOnce = true;
             _movementDirection = new Vector3(input.x, input.y, 0f).normalized;
