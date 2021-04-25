@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 public class Worm : MonoBehaviour
 {
@@ -40,6 +39,11 @@ public class Worm : MonoBehaviour
     public int Depth { get; private set; } = 1;
     public int Stars { get; private set; } = 0;
 
+    // exit
+    private bool _isExiting;
+    private static readonly float _defaultBodyPartDelay = .1f;
+    private static readonly float _exitingBodyPartDelay = .025f;
+
     private void Awake()
     {
         _input = new TatoInputActions();
@@ -51,6 +55,8 @@ public class Worm : MonoBehaviour
         {
             Grow();
         }
+
+        SetBodyPartDelay(_defaultBodyPartDelay);
     }
 
     private void Update()
@@ -61,36 +67,64 @@ public class Worm : MonoBehaviour
         {
             _timePlaying += Time.deltaTime;
 
-            var velocity = _movementDirection * _speed * Time.deltaTime;
-            var hits = GetHits(velocity);
-
-            EatOverlapingPotatoPieces(hits);
-            CollectStars(hits);
-
-            var exitHits = GetHitsByTag(hits, "Exit");
-
-            if(exitHits.Any())
+            if(_isExiting)
             {
-                Destroy(exitHits.First().collider.gameObject);
-                Depth += 1;
-                var potato = FindObjectOfType<Potato>();
-                potato.OnExited();
-                Move(velocity);
-            }
-            else if(IsEatingSelf(hits, velocity))
-            {
-                Move(velocity);
-                Die(DeathReason.Suicide);
-            }
-            else if(HasLifetimeLeft() == false)
-            {
-                Move(velocity);
-                Die(DeathReason.Lifetime);
+                PerormBodyPartCatchUp();
             }
             else
             {
-                Move(velocity);
-            }
+                var velocity = _movementDirection * _speed * Time.deltaTime;
+                var hits = GetHits(velocity);
+
+                EatOverlapingPotatoPieces(hits);
+                CollectStars(hits);
+
+                var exitHits = GetHitsByTag(hits, "Exit");
+
+                if(exitHits.Any())
+                {
+                    Destroy(exitHits.First().collider.gameObject);
+                    Depth += 1;
+                    _isExiting = true;
+
+                    SetBodyPartDelay(_exitingBodyPartDelay);
+                    SetNormalEyes(false);
+                    StartCoroutine(OnEnterNewLayer());
+                    Move(velocity);
+                }
+                else if(IsEatingSelf(hits, velocity))
+                {
+                    Move(velocity);
+                    Die(DeathReason.Suicide);
+                }
+                else if(HasLifetimeLeft() == false)
+                {
+                    Move(velocity);
+                    Die(DeathReason.Lifetime);
+                }
+                else
+                {
+                    Move(velocity);
+                }
+            } 
+        }
+    }
+
+    private System.Collections.IEnumerator OnEnterNewLayer()
+    {
+        yield return new WaitForSeconds(_bodyParts.Count * .04f);
+        _isExiting = false;
+        SetNormalEyes(true);
+        var potato = FindObjectOfType<Potato>();
+        potato.OnExited();
+        SetBodyPartDelay(_defaultBodyPartDelay);
+    }
+
+    private void SetBodyPartDelay(float delay)
+    {
+        foreach(var bodyPart in _bodyParts)
+        {
+            bodyPart.Delay = delay;
         }
     }
 
@@ -177,7 +211,11 @@ public class Worm : MonoBehaviour
     {
         transform.position += velocity;
         transform.up = -velocity.normalized;
+        PerormBodyPartCatchUp();
+    }
 
+    private void PerormBodyPartCatchUp()
+    {
         foreach(var bodyPart in _bodyParts)
         {
             bodyPart.OnLeaderPositionUpdated();
@@ -264,17 +302,17 @@ public class Worm : MonoBehaviour
         DeathCanvas.gameObject.SetActive(true);
     }
 
-    private void HideNormalEyes()
+    private void SetNormalEyes(bool isActive)
     {
         foreach(var normalEye in NormalEyes)
         {
-            normalEye.gameObject.SetActive(false);
+            normalEye.gameObject.SetActive(isActive);
         }
     }
 
     private void ShowDeadEyes()
     {
-        HideNormalEyes();
+        SetNormalEyes(false);
 
         foreach(var deadEye in DeadEyes)
         {

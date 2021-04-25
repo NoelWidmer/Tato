@@ -6,7 +6,7 @@ public class WormBodyPart : MonoBehaviour
     private Transform _leader;
 
     private Queue<(float Time, Vector3 Position)> _leaderPositions = new Queue<(float Time, Vector3 Position)>();
-    private static readonly float delay = .1f;
+    public float Delay = .1f;
 
     public void Follow(Transform leader)
     {
@@ -20,7 +20,7 @@ public class WormBodyPart : MonoBehaviour
 
         var peek = _leaderPositions.Peek();
 
-        while(Time.time - delay >= peek.Time)
+        while(Time.time - Delay >= peek.Time)
         {
             _leaderPositions.Dequeue();
             transform.position = peek.Position;
