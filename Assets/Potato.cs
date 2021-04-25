@@ -14,7 +14,7 @@ public class Potato : MonoBehaviour
 
     private void Awake()
     {
-        _collider = GetComponent<PolygonCollider2D>();
+        _collider = GetComponentInChildren<PolygonCollider2D>();
         SetupFirstStage();
     }
 
