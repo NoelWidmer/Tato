@@ -70,7 +70,7 @@ SpriteRenderer:
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: -295569597
-  m_SortingLayer: 2
+  m_SortingLayer: 3
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: b1f0e5163da61604689435cecd2b2759, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -94,7 +94,7 @@ GameObject:
   - component: {fileID: 8642087120897944394}
   - component: {fileID: 8642087120897944395}
   - component: {fileID: 1433201077480134323}
-  m_Layer: 11
+  m_Layer: 10
   m_Name: WormBodyPart
   m_TagString: Untagged
   m_Icon: {fileID: 0}

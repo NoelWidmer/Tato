@@ -6,8 +6,7 @@ using UnityEngine.SceneManagement;
 public class Worm : MonoBehaviour
 {
     // inspector
-    public LayerMask PotatoPieceLayerMask;
-    public LayerMask WormLayerMask;
+    public LayerMask WormObstacleLayerMask;
 
     // movement
     private TatoInputActions _input;
@@ -49,18 +48,25 @@ public class Worm : MonoBehaviour
         if(_wasInputProvidedAtLeastOnce)
         {
             var velocity = _movementDirection * _speed * Time.deltaTime;
+            var hits = GetHits(velocity);
 
-            EatOverlapingPotatoPieces(velocity);
+            EatOverlapingPotatoPieces(hits);
 
-            if(IsEatingSelf(velocity))
+            if(HasTouchedExit(hits))
+            {
+                var potato = FindObjectOfType<Potato>();
+                potato.OnExited();
+                Move(velocity);
+            }
+            else if(IsEatingSelf(hits, velocity))
             {
                 Move(velocity);
-                Die();
+                Die(DeathReason.Suicide);
             }
             else if(HasLifetimeLeft() == false)
             {
                 Move(velocity);
-                Die();
+                Die(DeathReason.Lifetime);
             }
             else
             {
@@ -80,59 +86,55 @@ public class Worm : MonoBehaviour
         }
     }
 
-    private void EatOverlapingPotatoPieces(Vector3 velocity)
+    private RaycastHit2D[] GetHits(Vector3 velocity)
     {
-        var raycastSettings = GetRaycastSettings(velocity);
+        var origin = transform.position + velocity.normalized * .15f;
+        var distance = velocity.magnitude - .15f;
 
-        foreach(var hit in Physics2D.RaycastAll(raycastSettings.RaycastOrigin, raycastSettings.raycastVector.normalized, raycastSettings.raycastVector.magnitude, PotatoPieceLayerMask))
+        return Physics2D.RaycastAll(
+            origin,
+            velocity.normalized,
+            distance, 
+            WormObstacleLayerMask);
+    }
+
+    private void EatOverlapingPotatoPieces(RaycastHit2D[] hits)
+    {
+        foreach(var hit in hits)
         {
             var piece = hit.collider.GetComponent<PotatoPiece>();
 
-            if(piece.IsEaten == false)
-            {
+            if(piece != null && piece.IsEaten == false)
+            { 
                 EatPiece(piece);
             }
         }
     }
 
-    private (Vector3 RaycastOrigin, Vector3 raycastVector) GetRaycastSettings(Vector3 velocity)
+    private bool HasTouchedExit(RaycastHit2D[] hits)
     {
-        var origin = transform.position + velocity.normalized * .15f;
-        var vector = velocity.normalized * (velocity.magnitude - .15f);
-        return (origin, vector);
+        return hits.Any(hit => hit.collider.tag == "Exit");
     }
 
-    private bool IsEatingSelf(Vector3 velocity)
+    private bool IsEatingSelf(RaycastHit2D[] hits, Vector3 velocity)
     {
-        var raycastSettings = GetRaycastSettings(velocity);
-
-        var hit = Physics2D.Raycast(
-            raycastSettings.RaycastOrigin, 
-            raycastSettings.raycastVector.normalized, 
-            raycastSettings.raycastVector.magnitude, 
-            WormLayerMask);
-
-        if(hit.collider == null)
+        foreach(var hit in hits)
         {
-            return false;
-        }
-        else
-        {
-            var vectorToBodyPart = hit.collider.transform.position - transform.position;
+            if(hit.collider.GetComponent<WormBodyPart>() != null)
+            {
+                var vectorToBodyPart = hit.collider.transform.position - transform.position;
 
-            if(vectorToBodyPart.magnitude == 0f)
-            {
-                // we are exactly on the body part.
-                // this shouldn't happen.
-                // maybe it could at the beginning of a stage?
-                // let's just handle this in favour of player.
-                return false;
-            }
-            else
-            {
-                return Vector3.Dot(velocity.normalized, vectorToBodyPart.normalized) > 0f;
+                if(vectorToBodyPart.magnitude > 0f)
+                { 
+                    if(Vector3.Dot(velocity.normalized, vectorToBodyPart.normalized) > 0f)
+                    {
+                        return true;
+                    }
+                }
             }
         }
+
+        return false;
     }
 
     private bool HasLifetimeLeft()
@@ -196,7 +198,7 @@ public class Worm : MonoBehaviour
         }
     }
 
-    private void Die()
+    private void Die(DeathReason reason)
     {
         Destroy(gameObject);
         SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
@@ -206,4 +208,10 @@ public class Worm : MonoBehaviour
     {
         Gizmos.DrawLine(transform.position, transform.position + _movementDirection);
     }
+}
+
+public enum DeathReason
+{ 
+    Lifetime, 
+    Suicide
 }

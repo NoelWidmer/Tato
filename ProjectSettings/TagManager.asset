@@ -3,7 +3,8 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Exit
   layers:
   - Default
   - TransparentFX
@@ -15,8 +16,8 @@ TagManager:
   - 
   - 
   - 
-  - PotatoPiece
-  - BodyPart
+  - WormObstacle
+  - 
   - 
   - 
   - 
@@ -43,6 +44,9 @@ TagManager:
     locked: 0
   - name: PotatoPiece
     uniqueID: 40519493
+    locked: 0
+  - name: Interactables
+    uniqueID: 2359113991
     locked: 0
   - name: Worm
     uniqueID: 3999397699

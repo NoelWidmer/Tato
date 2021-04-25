@@ -23,4 +23,11 @@ public class PotatoPiece : MonoBehaviour
         _sr.enabled = true;
         _collider.enabled = false;
     }
+
+    public void BecomeEatable()
+    {
+        IsEaten = false;
+        _sr.enabled = false;
+        _collider.enabled = true;
+    }
 }
