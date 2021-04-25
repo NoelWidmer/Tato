@@ -189,12 +189,10 @@ public class Worm : MonoBehaviour
             if(hits.Any(hit => hit.collider.tag == "Drop"))
             {
                 _speed = _wetSpeed;
-                Debug.Log("wet");
             }
             else
             {
                 _speed = _normalSpeed;
-                Debug.Log("normal");
             }
         }
     }

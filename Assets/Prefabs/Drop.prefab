@@ -123,8 +123,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2284355346321707948}
-  - component: {fileID: 2284355346321707950}
   - component: {fileID: 2284355346321707949}
+  - component: {fileID: 503784844434739096}
   m_Layer: 10
   m_Name: BigSplashSprite
   m_TagString: Drop
@@ -146,19 +146,6 @@ Transform:
   m_Father: {fileID: 2284355345943420017}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &2284355346321707950
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2284355346321707947}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.31
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!212 &2284355346321707949
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -211,6 +198,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!58 &503784844434739096
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2284355346321707947}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  serializedVersion: 2
+  m_Radius: 1.25
 --- !u!1 &2284355346788925530
 GameObject:
   m_ObjectHideFlags: 0
