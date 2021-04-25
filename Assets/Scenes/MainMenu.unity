@@ -445,7 +445,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 464037cc073e794458a7131c16caa60b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StartButton: {fileID: 34270393}
+  ControllerStartButton: {fileID: 34270393}
+  MouseStartButton: {fileID: 1092399782}
 --- !u!1 &466786538
 GameObject:
   m_ObjectHideFlags: 0
@@ -554,6 +555,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad22f007f28aea142a51ba6e8ac17b19, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  UseController: 0
+  PersonalBest: 0
 --- !u!4 &487016311
 Transform:
   m_ObjectHideFlags: 0

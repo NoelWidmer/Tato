@@ -65,8 +65,6 @@ public class Worm : MonoBehaviour
         _input = new TatoInputActions();
         _input.Enable();
 
-        _lastMousePosition = _input.Default.MoveMouse.ReadValue<Vector2>();
-
         for (var i = 0; i < _initialBodyPartCount; i++)
         {
             Grow();
@@ -145,8 +143,6 @@ public class Worm : MonoBehaviour
         }
     }
 
-    private Vector2 _lastMousePosition;
-
     private void HandleInput()
     {
         Vector2 input;
@@ -163,18 +159,9 @@ public class Worm : MonoBehaviour
         else
         {
             var mousePosition = _input.Default.MoveMouse.ReadValue<Vector2>();
-            var distance = Vector2.Distance(mousePosition, _lastMousePosition);
-
-            if (Vector2.Distance(mousePosition, _lastMousePosition) < 1f)
-            {
-                input = Vector2.zero;
-            }
-            else
-            {
-                input = (mousePosition - _lastMousePosition).normalized;
-            }
-
-            _lastMousePosition = mousePosition;
+            var worldPosition = Camera.main.ScreenToWorldPoint(mousePosition);
+            input = worldPosition - transform.position;
+            Debug.DrawLine(transform.position, transform.position + new Vector3(input.x, input.y, 0f));
         }
 
         if (input.magnitude > 0f)
@@ -347,6 +334,11 @@ public class Worm : MonoBehaviour
                 break;
             default:
                 throw new NotImplementedException();
+        }
+
+        if (Stars > _gameState.HighScore)
+        {
+            _gameState.HighScore = Stars;
         }
 
         DeathCanvas.SetValues(

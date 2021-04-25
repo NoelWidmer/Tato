@@ -24,13 +24,15 @@ public class DeatchScreen : MonoBehaviour
 
     public void SetValues(string headerText, string hinttext, int starCount, int depth, int length, float time)
     {
+        var gameState = FindObjectOfType<GameState>();
+
         HeaderText.text = headerText;
         HintText.text = hinttext;
 
         var timeSpan = TimeSpan.FromMilliseconds(Mathf.FloorToInt(time * 1000));
 
         Score.text = starCount.ToString();
-        HighScore.text = "?";
+        HighScore.text = $"High Score: {gameState.HighScore}";
 
         PotatoText.text = depth.ToString();
         LengthText.text = length.ToString();
@@ -39,7 +41,6 @@ public class DeatchScreen : MonoBehaviour
 
     private void OnRestart()
     {
-        Debug.Log("restart");
         SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
     }
 }
