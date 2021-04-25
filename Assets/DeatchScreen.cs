@@ -9,8 +9,8 @@ public class DeatchScreen : MonoBehaviour
     public Text HintText;
 
     public Text Score;
+    public Text HighScore;
 
-    public Text StarsCollectedText;
     public Text PotatoText;
     public Text LengthText;
     public Text TimeText;
@@ -29,7 +29,9 @@ public class DeatchScreen : MonoBehaviour
 
         var timeSpan = TimeSpan.FromMilliseconds(Mathf.FloorToInt(time * 1000));
 
-        Score.text = StarsCollectedText.text = starCount.ToString();
+        Score.text = starCount.ToString();
+        HighScore.text = "?";
+
         PotatoText.text = depth.ToString();
         LengthText.text = length.ToString();
         TimeText.text = $"{timeSpan.Minutes}m {timeSpan.Seconds}s {timeSpan.Milliseconds}ms";

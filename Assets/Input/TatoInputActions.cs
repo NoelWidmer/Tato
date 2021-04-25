@@ -25,6 +25,14 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
                     ""expectedControlType"": ""Vector2"",
                     ""processors"": ""StickDeadzone,NormalizeVector2"",
                     ""interactions"": """"
+                },
+                {
+                    ""name"": ""MoveMouse"",
+                    ""type"": ""Value"",
+                    ""id"": ""75a6b9fd-3d34-426f-bdcc-d8878b736ae3"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """"
                 }
             ],
             ""bindings"": [
@@ -33,9 +41,20 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
                     ""id"": ""bbe13480-7dc2-461a-9d6d-8e5da19637a5"",
                     ""path"": ""<Gamepad>/leftStick"",
                     ""interactions"": """",
-                    ""processors"": ""StickDeadzone,NormalizeVector2"",
+                    ""processors"": ""StickDeadzone"",
                     ""groups"": """",
                     ""action"": ""Move"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ef73c157-b2cf-4faf-85f5-9545fce43859"",
+                    ""path"": ""<Mouse>/position"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""MoveMouse"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -47,6 +66,7 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
         // Default
         m_Default = asset.FindActionMap("Default", throwIfNotFound: true);
         m_Default_Move = m_Default.FindAction("Move", throwIfNotFound: true);
+        m_Default_MoveMouse = m_Default.FindAction("MoveMouse", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -97,11 +117,13 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
     private readonly InputActionMap m_Default;
     private IDefaultActions m_DefaultActionsCallbackInterface;
     private readonly InputAction m_Default_Move;
+    private readonly InputAction m_Default_MoveMouse;
     public struct DefaultActions
     {
         private @TatoInputActions m_Wrapper;
         public DefaultActions(@TatoInputActions wrapper) { m_Wrapper = wrapper; }
         public InputAction @Move => m_Wrapper.m_Default_Move;
+        public InputAction @MoveMouse => m_Wrapper.m_Default_MoveMouse;
         public InputActionMap Get() { return m_Wrapper.m_Default; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -114,6 +136,9 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
                 @Move.started -= m_Wrapper.m_DefaultActionsCallbackInterface.OnMove;
                 @Move.performed -= m_Wrapper.m_DefaultActionsCallbackInterface.OnMove;
                 @Move.canceled -= m_Wrapper.m_DefaultActionsCallbackInterface.OnMove;
+                @MoveMouse.started -= m_Wrapper.m_DefaultActionsCallbackInterface.OnMoveMouse;
+                @MoveMouse.performed -= m_Wrapper.m_DefaultActionsCallbackInterface.OnMoveMouse;
+                @MoveMouse.canceled -= m_Wrapper.m_DefaultActionsCallbackInterface.OnMoveMouse;
             }
             m_Wrapper.m_DefaultActionsCallbackInterface = instance;
             if (instance != null)
@@ -121,6 +146,9 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
                 @Move.started += instance.OnMove;
                 @Move.performed += instance.OnMove;
                 @Move.canceled += instance.OnMove;
+                @MoveMouse.started += instance.OnMoveMouse;
+                @MoveMouse.performed += instance.OnMoveMouse;
+                @MoveMouse.canceled += instance.OnMoveMouse;
             }
         }
     }
@@ -128,5 +156,6 @@ public class @TatoInputActions : IInputActionCollection, IDisposable
     public interface IDefaultActions
     {
         void OnMove(InputAction.CallbackContext context);
+        void OnMoveMouse(InputAction.CallbackContext context);
     }
 }

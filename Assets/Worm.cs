@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class Worm : MonoBehaviour
 {
+    public bool RemoveBehaviourOnPlay;
+
     private Potato _potato;
 
     // inspector
@@ -50,14 +52,20 @@ public class Worm : MonoBehaviour
 
     private void Awake()
     {
+        if (RemoveBehaviourOnPlay)
+        {
+            Destroy(this);
+            return;
+        }
+
         _potato = FindObjectOfType<Potato>();
 
         _input = new TatoInputActions();
         _input.Enable();
 
-        //Cursor.visible = false;
+        _lastMousePosition = _input.Default.MoveMouse.ReadValue<Vector2>();
 
-        for(var i = 0; i < _initialBodyPartCount; i++)
+        for (var i = 0; i < _initialBodyPartCount; i++)
         {
             Grow();
         }
@@ -135,17 +143,45 @@ public class Worm : MonoBehaviour
         }
     }
 
+    private Vector2 _lastMousePosition;
+
     private void HandleInput()
     {
-        var input = _input.Default.Move.ReadValue<Vector2>();
+        Vector2 input;
 
-        if (Application.isEditor == false)
+        var stickInput = _input.Default.Move.ReadValue<Vector2>();
+
+        if (stickInput.magnitude == 0)
         {
-            input *= new Vector2(1f, -1f);
+            var mousePosition = _input.Default.MoveMouse.ReadValue<Vector2>();
+            var distance = Vector2.Distance(mousePosition, _lastMousePosition);
+
+            if (Vector2.Distance(mousePosition, _lastMousePosition) < 1f)
+            {
+                input = Vector2.zero;
+            }
+            else
+            {
+                Debug.Log(distance);
+                input = (mousePosition - _lastMousePosition).normalized;
+            }
+
+            _lastMousePosition = mousePosition;
+        }
+        else
+        {
+            input = stickInput;
         }
 
         if (input.magnitude > 0f)
         {
+
+            if (Application.isEditor == false)
+            {
+                input *= new Vector2(1f, -1f);
+            }
+
+            input = input.normalized;
             _wasInputProvidedAtLeastOnce = true;
             _movementDirection = new Vector3(input.x, input.y, 0f).normalized;
         }

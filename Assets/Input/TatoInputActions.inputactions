@@ -12,6 +12,14 @@
                     "expectedControlType": "Vector2",
                     "processors": "StickDeadzone,NormalizeVector2",
                     "interactions": ""
+                },
+                {
+                    "name": "MoveMouse",
+                    "type": "Value",
+                    "id": "75a6b9fd-3d34-426f-bdcc-d8878b736ae3",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": ""
                 }
             ],
             "bindings": [
@@ -20,9 +28,20 @@
                     "id": "bbe13480-7dc2-461a-9d6d-8e5da19637a5",
                     "path": "<Gamepad>/leftStick",
                     "interactions": "",
-                    "processors": "StickDeadzone,NormalizeVector2",
+                    "processors": "StickDeadzone",
                     "groups": "",
                     "action": "Move",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "ef73c157-b2cf-4faf-85f5-9545fce43859",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "MoveMouse",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
