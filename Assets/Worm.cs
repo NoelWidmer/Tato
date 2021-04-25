@@ -28,6 +28,9 @@ public class Worm : MonoBehaviour
     private int _requiredPotatoPiecesForGrowth = 60;
     private int _piecesEaten;
 
+    // depth
+    public int Depth { get; private set; } = 1;
+
     private void Awake()
     {
         _input = new TatoInputActions();
@@ -52,8 +55,11 @@ public class Worm : MonoBehaviour
 
             EatOverlapingPotatoPieces(hits);
 
-            if(HasTouchedExit(hits))
+            var exitHit = HasTouchedExit(hits);
+            if(exitHit.HasValue)
             {
+                Destroy(exitHit.Value.collider.gameObject);
+                Depth += 1;
                 var potato = FindObjectOfType<Potato>();
                 potato.OnExited();
                 Move(velocity);
@@ -111,9 +117,9 @@ public class Worm : MonoBehaviour
         }
     }
 
-    private bool HasTouchedExit(RaycastHit2D[] hits)
+    private RaycastHit2D? HasTouchedExit(RaycastHit2D[] hits)
     {
-        return hits.Any(hit => hit.collider.tag == "Exit");
+        return hits.Select(hit => (RaycastHit2D?)hit).FirstOrDefault(hit => hit.Value.collider.tag == "Exit");
     }
 
     private bool IsEatingSelf(RaycastHit2D[] hits, Vector3 velocity)

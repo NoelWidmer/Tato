@@ -8,7 +8,6 @@ public class Potato : MonoBehaviour
     public float ExitRadius;
 
     private PolygonCollider2D _collider;
-    private Transform _exit;
     private List<PotatoPiece> _potatoPieces = new List<PotatoPiece>();
 
     private void Awake()
@@ -20,17 +19,15 @@ public class Potato : MonoBehaviour
     private void SetupFirstStage()
     {
         GeneratePotatoPieces();
-
-        var exitPosition = GetExitLocation();
-        var go = Instantiate(ExitPrefab, exitPosition, Quaternion.identity);
-        _exit = go.transform;
+        SpawnExit();
     }
 
-    private Vector3 GetExitLocation()
+    private void SpawnExit()
     {
         var exitDirection = new Vector3(Random.value, Random.value, 0f).normalized;
         var exitDistanceFromCenter = ExitRadius * Random.value;
-        return transform.position + exitDirection * exitDistanceFromCenter;
+        var exitPosition = transform.position + exitDirection * exitDistanceFromCenter;
+        Instantiate(ExitPrefab, exitPosition, Quaternion.identity);
     }
 
     private void GeneratePotatoPieces()
@@ -78,7 +75,7 @@ public class Potato : MonoBehaviour
             }
         }
 
-        _exit.transform.position = GetExitLocation();
+        SpawnExit();
     }
 
     private void OnDrawGizmos()
