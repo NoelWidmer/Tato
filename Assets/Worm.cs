@@ -23,10 +23,10 @@ public class Worm : MonoBehaviour
 
     // movement
     private TatoInputActions _input;
-    private bool _wasInputProvidedAtLeastOnce;
+    private bool _isMovementEnabled;
     private static readonly float _normalSpeed = 2f;
     private static readonly float _wetSpeed = 1f;
-    private float _speed;
+    private float _currentSpeed;
     private Vector3 _movementDirection;
 
     //lifetime
@@ -88,7 +88,7 @@ public class Worm : MonoBehaviour
     {
         HandleInput();
 
-        if(_wasInputProvidedAtLeastOnce)
+        if(_isMovementEnabled)
         {
             _timePlaying += Time.deltaTime;
 
@@ -98,7 +98,7 @@ public class Worm : MonoBehaviour
             }
             else
             {
-                var velocity = _movementDirection * _speed * Time.deltaTime;
+                var velocity = _movementDirection * _currentSpeed * Time.deltaTime;
                 var hits = GetHits(velocity);
 
                 EatOverlapingPotatoPieces(hits);
@@ -176,7 +176,7 @@ public class Worm : MonoBehaviour
         }
         else
         {
-            if (_wasInputProvidedAtLeastOnce == false)
+            if (_isMovementEnabled == false)
             {
                 if (_input.Default.MouseStart.ReadValue<float>() != 0f)
                 {
@@ -184,7 +184,7 @@ public class Worm : MonoBehaviour
                 }
             }
 
-            if (_wasInputProvidedAtLeastOnce)
+            if (_isMovementEnabled)
             {
                 var mousePosition = _input.Default.MoveMouse.ReadValue<Vector2>();
                 var mousePositionInWorld = Camera.main.ScreenToWorldPoint(mousePosition);
@@ -196,17 +196,20 @@ public class Worm : MonoBehaviour
 
     private void EnableMovement()
     {
-        if (_wasInputProvidedAtLeastOnce == false)
+        if (_isMovementEnabled == false)
         {
-            _wasInputProvidedAtLeastOnce = true;
+            _isMovementEnabled = true;
             Tutorial.gameObject.SetActive(false);
         }
     }
 
     private RaycastHit2D[] GetHits(Vector3 velocity)
     {
-        var origin = transform.position + velocity.normalized * .15f;
-        var distance = velocity.magnitude - .15f;
+        var safety = .13f;
+        var origin = transform.position + velocity.normalized * safety;
+        var distance = velocity.magnitude - safety;
+        
+        Debug.DrawLine(origin, origin + velocity.normalized * distance, Color.blue);
 
         return Physics2D.RaycastAll(
             origin,
@@ -245,12 +248,12 @@ public class Worm : MonoBehaviour
         {
             if (hits.Any(hit => hit.collider.tag == "Drop"))
             {
-                _speed = _wetSpeed;
+                _currentSpeed = _wetSpeed;
                 return;
             }
         }
 
-        _speed = _normalSpeed;
+        _currentSpeed = _normalSpeed;
     }
 
     private RaycastHit2D[] GetHitsByTag(RaycastHit2D[] hits, string tag)
@@ -287,6 +290,21 @@ public class Worm : MonoBehaviour
 
     private void Move(Vector3 velocity)
     {
+        var firstBodyPartPosition = _bodyParts.First().transform.position;
+
+        if (Vector3.Distance(firstBodyPartPosition, transform.position) > .01f)
+        {
+            var directionToBody = firstBodyPartPosition - transform.position;
+            directionToBody = new Vector3(directionToBody.x, directionToBody.y, 0f).normalized;
+
+            var angle = Vector3.Angle(velocity.normalized, directionToBody);
+
+            if (angle < 90f)
+            {
+                velocity = transform.right * velocity.magnitude;
+            }
+        }
+
         transform.position += velocity;
         transform.up = -velocity.normalized;
         PerormBodyPartCatchUp();

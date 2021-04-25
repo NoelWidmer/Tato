@@ -32,7 +32,7 @@ public class DeatchScreen : MonoBehaviour
         var timeSpan = TimeSpan.FromMilliseconds(Mathf.FloorToInt(time * 1000));
 
         Score.text = starCount.ToString();
-        HighScore.text = $"High Score: {gameState.HighScore}";
+        HighScore.text = $"Personal Best: {gameState.HighScore}";
 
         PotatoText.text = depth.ToString();
         LengthText.text = length.ToString();
