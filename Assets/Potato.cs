@@ -52,12 +52,17 @@ public class Potato : MonoBehaviour
             position += new Vector2(PotatoPiece.Radius, 0f);
         }
 
-        if(_collider.OverlapPoint(position))
+        if(IsInsidePotato(position))
         {
             var go = Instantiate(PotatoPiecePrefab, position, Quaternion.identity, transform);
             var potatoPiece = go.GetComponent<PotatoPiece>();
             _potatoPieces.Add(potatoPiece);
         }
+    }
+
+    public bool IsInsidePotato(Vector2 point)
+    {
+        return _collider.OverlapPoint(point);
     }
 
     private void SpawnExit()
@@ -70,12 +75,17 @@ public class Potato : MonoBehaviour
 
     private void SpawnStar()
     {
+        var starPosition = GetStarSpawnPosition();
+        Instantiate(StarPrefab, starPosition, Quaternion.identity);
+    }
+
+    public Vector3 GetStarSpawnPosition()
+    {
         var starDirection = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0f).normalized;
         var minDistance = ExitRadius;
         var variableDistance = StarRadius - minDistance;
         var starDistanceFromCenter = variableDistance * Random.value + minDistance;
-        var starPosition = transform.position + starDirection * starDistanceFromCenter;
-        Instantiate(StarPrefab, starPosition, Quaternion.identity);
+        return transform.position + starDirection * starDistanceFromCenter;
     }
 
     public void OnExited()

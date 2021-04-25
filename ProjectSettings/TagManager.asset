@@ -43,6 +43,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: Drops
+    uniqueID: 2238151981
+    locked: 0
+  - name: Potato
+    uniqueID: 1321575493
+    locked: 0
   - name: PotatoPiece
     uniqueID: 40519493
     locked: 0
