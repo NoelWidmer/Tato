@@ -25,7 +25,7 @@ public class Worm : MonoBehaviour
     private List<WormBodyPart> _bodyParts = new List<WormBodyPart>();
     private Transform _bodyPartParent;
     private int _initialBodyPartCount = 5;
-    private int _requiredPotatoPiecesForGrowth = 60;
+    private int _requiredPotatoPiecesForGrowth = 50;
     private int _piecesEaten;
 
     // stats
