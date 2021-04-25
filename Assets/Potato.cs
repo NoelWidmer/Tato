@@ -106,7 +106,7 @@ public class Potato : MonoBehaviour
 
         if (shouldBeActive != FullPotatoSprite.gameObject.activeSelf)
         {
-            FullPotatoSprite.gameObject.SetActive(shouldBeActive);
+            //FullPotatoSprite.gameObject.SetActive(shouldBeActive);
         }
     }
 
