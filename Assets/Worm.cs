@@ -299,12 +299,12 @@ public class Worm : MonoBehaviour
         switch(reason)
         {
             case DeathReason.Lifetime:
-                info = "You've let Tato starve  ;(";
-                hint = "Hint: Continuously feed Tato tasty potato.";
+                info = "Tato starved  :(";
+                hint = "Make sure to continuously feed Tato tasty potato.";
                 break;
             case DeathReason.Suicide:
-                info = "You've let Tato hurt herself  ;(";
-                hint = "Hint: Don't give Tato a chance to bite herself.";
+                info = "Tato got hurt :(";
+                hint = "Don't give Tato a chance to bite herself.";
                 break;
             default:
                 throw new NotImplementedException();

@@ -7,6 +7,8 @@ public class DeatchScreen : MonoBehaviour
     public Text HeaderText;
     public Text HintText;
 
+    public Text Score;
+
     public Text StarsCollectedText;
     public Text PotatoText;
     public Text LengthText;
@@ -24,7 +26,7 @@ public class DeatchScreen : MonoBehaviour
         HeaderText.text = headerText;
         HintText.text = hinttext;
 
-        StarsCollectedText.text = starCount.ToString();
+        Score.text = StarsCollectedText.text = starCount.ToString();
         PotatoText.text = depth.ToString();
         LengthText.text = length.ToString();
         TimeText.text = time.ToString();
