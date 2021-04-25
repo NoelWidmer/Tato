@@ -6,14 +6,17 @@ public class Potato : MonoBehaviour
     public GameObject PotatoPiecePrefab;
     public GameObject ExitPrefab;
     public GameObject StarPrefab;
+    public SpriteRenderer FullPotatoSprite;
     public float ExitRadius;
     public float StarRadius;
 
+    private Worm _worm;
     private PolygonCollider2D _collider;
     private List<PotatoPiece> _potatoPieces = new List<PotatoPiece>();
 
     private void Awake()
     {
+        _worm = FindObjectOfType<Worm>();
         _collider = GetComponentInChildren<PolygonCollider2D>();
         SetupFirstStage();
     }
@@ -86,6 +89,25 @@ public class Potato : MonoBehaviour
         var variableDistance = StarRadius - minDistance;
         var starDistanceFromCenter = variableDistance * Random.value + minDistance;
         return transform.position + starDirection * starDistanceFromCenter;
+    }
+
+    private void LateUpdate()
+    {
+        bool shouldBeActive;
+
+        if (IsInsidePotato(_worm.transform.position))
+        {
+            shouldBeActive = false;
+        }
+        else
+        {
+            shouldBeActive = true;
+        }
+
+        if (shouldBeActive != FullPotatoSprite.gameObject.activeSelf)
+        {
+            FullPotatoSprite.gameObject.SetActive(shouldBeActive);
+        }
     }
 
     public void OnExited()
