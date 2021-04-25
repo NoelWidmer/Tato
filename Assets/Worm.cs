@@ -11,6 +11,10 @@ public class Worm : MonoBehaviour
     public Canvas GameplayCanvas;
     public DeatchScreen DeathCanvas;
 
+    // eyes
+    public List<Transform> NormalEyes;
+    public List<Transform> DeadEyes;
+
     // movement
     private TatoInputActions _input;
     private bool _wasInputProvidedAtLeastOnce;
@@ -228,6 +232,8 @@ public class Worm : MonoBehaviour
     {
         enabled = false;
 
+        ShowDeadEyes();
+
         string info;
         string hint;
 
@@ -256,7 +262,24 @@ public class Worm : MonoBehaviour
 
         GameplayCanvas.gameObject.SetActive(false);
         DeathCanvas.gameObject.SetActive(true);
-        //SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+    }
+
+    private void HideNormalEyes()
+    {
+        foreach(var normalEye in NormalEyes)
+        {
+            normalEye.gameObject.SetActive(false);
+        }
+    }
+
+    private void ShowDeadEyes()
+    {
+        HideNormalEyes();
+
+        foreach(var deadEye in DeadEyes)
+        {
+            deadEye.gameObject.SetActive(true);
+        }
     }
 
     private void OnDrawGizmos()
