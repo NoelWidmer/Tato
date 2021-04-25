@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -7,6 +8,8 @@ public class Worm : MonoBehaviour
 {
     // inspector
     public LayerMask WormObstacleLayerMask;
+    public Canvas GameplayCanvas;
+    public DeatchScreen DeathCanvas;
 
     // movement
     private TatoInputActions _input;
@@ -220,8 +223,37 @@ public class Worm : MonoBehaviour
 
     private void Die(DeathReason reason)
     {
-        Destroy(gameObject);
-        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
+        enabled = false;
+
+        string info;
+        string hint;
+
+        switch(reason)
+        {
+            case DeathReason.Lifetime:
+                info = "You've let Tato starve  ;(";
+                hint = "Hint: Continuously feed Tato with some potato.";
+                break;
+            case DeathReason.Suicide:
+                info = "You've let Tato hurt herself  ;(";
+                hint = "Hint: Don't give Tato a chance to bite herself.";
+                break;
+            default:
+                throw new NotImplementedException();
+        }
+
+        DeathCanvas.SetValues(
+            info,
+            hint, 
+            Stars, 
+            Depth, 
+            _bodyParts.Count, 
+            Time.time
+            );
+
+        GameplayCanvas.gameObject.SetActive(false);
+        DeathCanvas.gameObject.SetActive(true);
+        //SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().name);
     }
 
     private void OnDrawGizmos()
