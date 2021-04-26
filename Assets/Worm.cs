@@ -60,6 +60,10 @@ public class Worm : MonoBehaviour
     private static readonly float _defaultBodyPartDelay = .1f;
     private static readonly float _exitingBodyPartDelay = .025f;
 
+    // invincibility
+    private float _timeSinceLastEntering;
+    private float _durationOfInvincibility = 1f;
+
     private void Awake()
     {
         if (RemoveBehaviourOnPlay)
@@ -105,6 +109,8 @@ public class Worm : MonoBehaviour
             }
             else
             {
+                _timeSinceLastEntering += Time.deltaTime;
+
                 var velocity = _movementDirection * _currentSpeed * Time.deltaTime;
                 var hits = GetHits(velocity);
 
@@ -268,6 +274,12 @@ public class Worm : MonoBehaviour
 
     private bool IsEatingSelf(RaycastHit2D[] hits, Vector3 velocity)
     {
+        if (_timeSinceLastEntering < _durationOfInvincibility)
+        {
+            // don't let the palyer bite himslef when just entering. This feels unfair.
+            return false;
+        }
+
         foreach(var hit in hits)
         {
             if(hit.collider.GetComponent<WormBodyPart>() != null)
@@ -314,6 +326,7 @@ public class Worm : MonoBehaviour
 
             if (distanceToLastBodyPart < .1f)
             {
+                _timeSinceLastEntering = 0f;
                 _isExiting = false;
                 SetNormalEyes(true);
                 var potato = FindObjectOfType<Potato>();
