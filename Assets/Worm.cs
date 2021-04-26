@@ -238,6 +238,7 @@ public class Worm : MonoBehaviour
         foreach(var starHit in GetHitsByTag(hits, "Star"))
         {
             ChipSound.Play();
+            AddLifetime(20f);
             Stars += 1;
             Destroy(starHit.collider.gameObject);
             var potato = FindObjectOfType<Potato>();
@@ -325,7 +326,7 @@ public class Worm : MonoBehaviour
     {
         _piecesEaten += 1;
         piece.BecomeEaten();
-        AddLifetime();
+        AddLifetime(1f);
 
         if(_piecesEaten % _requiredPotatoPiecesForGrowth == 0)
         {
@@ -355,9 +356,9 @@ public class Worm : MonoBehaviour
         bodyPart.Follow(leader, _bodyParts.Count);
     }
 
-    private void AddLifetime()
+    private void AddLifetime(float multiplier)
     {
-        _remainingLifetime += _lifetimeGainedByPiece;
+        _remainingLifetime += _lifetimeGainedByPiece * multiplier;
 
         if(_remainingLifetime > _maxLifetime)
         {
