@@ -11,6 +11,7 @@ public class DeatchScreen : MonoBehaviour
     public Text Score;
     public Text HighScore;
 
+    public Text RainText;
     public Text PotatoText;
     public Text LengthText;
     public Text TimeText;
@@ -34,6 +35,7 @@ public class DeatchScreen : MonoBehaviour
         Score.text = starCount.ToString();
         HighScore.text = $"Personal Best: {gameState.HighScore}";
 
+        RainText.text = (depth - 1).ToString();
         PotatoText.text = depth.ToString();
         LengthText.text = length.ToString();
         TimeText.text = $"{timeSpan.Minutes}m {timeSpan.Seconds}s {timeSpan.Milliseconds}ms";
