@@ -211,16 +211,15 @@ public class Worm : MonoBehaviour
 
     private RaycastHit2D[] GetHits(Vector3 velocity)
     {
-        var safety = .13f;
-        var origin = transform.position + velocity.normalized * safety;
-        var distance = velocity.magnitude - safety;
+        var radius = .14f;
+        var origin = transform.position + velocity.normalized * radius;
         
-        Debug.DrawLine(origin, origin + velocity.normalized * distance, Color.blue);
+        Debug.DrawLine(origin, origin + velocity, Color.blue);
 
         return Physics2D.RaycastAll(
             origin,
             velocity.normalized,
-            distance, 
+            velocity.magnitude, 
             WormObstacleLayerMask);
     }
 
@@ -305,21 +304,6 @@ public class Worm : MonoBehaviour
 
     private void Move(Vector3 velocity)
     {
-        var firstBodyPartPosition = _bodyParts.First().transform.position;
-
-        if (Vector3.Distance(firstBodyPartPosition, transform.position) > .01f)
-        {
-            var directionToBody = firstBodyPartPosition - transform.position;
-            directionToBody = new Vector3(directionToBody.x, directionToBody.y, 0f).normalized;
-
-            var angle = Vector3.Angle(velocity.normalized, directionToBody);
-
-            if (angle < 90f)
-            {
-                velocity = transform.right * velocity.magnitude;
-            }
-        }
-
         transform.position += velocity;
         transform.up = -velocity.normalized;
         PerormBodyPartCatchUp();
@@ -363,8 +347,8 @@ public class Worm : MonoBehaviour
         go.name = _bodyParts.Count.ToString();
 
         var bodyPart = go.GetComponent<WormBodyPart>();
-        bodyPart.Follow(leader);
         _bodyParts.Add(bodyPart);
+        bodyPart.Follow(leader, _bodyParts.Count);
     }
 
     private void AddLifetime()
@@ -436,11 +420,6 @@ public class Worm : MonoBehaviour
         {
             deadEye.gameObject.SetActive(true);
         }
-    }
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawLine(transform.position, transform.position + _movementDirection);
     }
 }
 

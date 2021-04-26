@@ -8,10 +8,15 @@ public class WormBodyPart : MonoBehaviour
     private Queue<(float Time, Vector3 Position)> _leaderPositions = new Queue<(float Time, Vector3 Position)>();
     public float Delay = .1f;
 
-    public void Follow(Transform leader)
+    public void Follow(Transform leader, int position)
     {
         _leader = leader;
         _leaderPositions.Enqueue((Time.time, _leader.position));
+
+        if (position <= 5)
+        {
+            Destroy(GetComponent<CircleCollider2D>());
+        }
     }
 
     public void OnLeaderPositionUpdated()
