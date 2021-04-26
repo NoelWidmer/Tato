@@ -121,7 +121,6 @@ public class Worm : MonoBehaviour
 
                     SetBodyPartDelay(_exitingBodyPartDelay);
                     SetNormalEyes(false);
-                    StartCoroutine(OnEnterNewLayer());
                     Move(velocity);
                 }
                 else if(IsEatingSelf(hits, velocity))
@@ -140,16 +139,6 @@ public class Worm : MonoBehaviour
                 }
             } 
         }
-    }
-
-    private System.Collections.IEnumerator OnEnterNewLayer()
-    {
-        yield return new WaitForSeconds(_bodyParts.Count * .04f);
-        _isExiting = false;
-        SetNormalEyes(true);
-        var potato = FindObjectOfType<Potato>();
-        potato.OnExited();
-        SetBodyPartDelay(_defaultBodyPartDelay);
     }
 
     private void SetBodyPartDelay(float delay)
@@ -314,6 +303,21 @@ public class Worm : MonoBehaviour
         foreach(var bodyPart in _bodyParts)
         {
             bodyPart.OnLeaderPositionUpdated();
+        }
+
+        if (_isExiting)
+        {
+            var lastBodyPartPosition = _bodyParts.Last().transform.position;
+            var distanceToLastBodyPart = Vector3.Distance(transform.position, lastBodyPartPosition);
+
+            if (distanceToLastBodyPart < .1f)
+            {
+                _isExiting = false;
+                SetNormalEyes(true);
+                var potato = FindObjectOfType<Potato>();
+                potato.OnExited();
+                SetBodyPartDelay(_defaultBodyPartDelay);
+            }
         }
     }
 
