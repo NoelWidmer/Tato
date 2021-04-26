@@ -193,7 +193,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: This is Tato ...
+  m_Text: Look! It's Tato ...
 --- !u!222 &23548413
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1458,8 +1458,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1487640989
+  m_SortingLayer: 7
   m_SortingOrder: 0
   m_Sprite: {fileID: 21300000, guid: 461ce9a569e4741458ebaf8b1b5ab9a1, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -1697,7 +1697,7 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: ... she really likes fresh potato.
+  m_Text: ... she really loves fresh potato.
 --- !u!222 &2100452622
 CanvasRenderer:
   m_ObjectHideFlags: 0

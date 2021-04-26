@@ -21,6 +21,12 @@ public class Worm : MonoBehaviour
     public List<Transform> NormalEyes;
     public List<Transform> DeadEyes;
 
+    // sound
+    public AudioSource PotatoSound;
+    public AudioSource ChipSound;
+    public AudioSource HurtSound;
+    public AudioSource StarveSound;
+
     // movement
     private TatoInputActions _input;
     private bool _isMovementEnabled;
@@ -220,14 +226,22 @@ public class Worm : MonoBehaviour
 
     private void EatOverlapingPotatoPieces(RaycastHit2D[] hits)
     {
+        var piecesEaten = 0;
+
         foreach(var hit in hits)
         {
             var piece = hit.collider.GetComponent<PotatoPiece>();
 
             if(piece != null && piece.IsEaten == false)
-            { 
+            {
+                piecesEaten += 1;
                 EatPiece(piece);
             }
+        }
+
+        if (piecesEaten > 0 && PotatoSound.isPlaying == false)
+        {
+            PotatoSound.Play();
         }
     }
 
@@ -235,6 +249,7 @@ public class Worm : MonoBehaviour
     {
         foreach(var starHit in GetHitsByTag(hits, "Star"))
         {
+            ChipSound.Play();
             Stars += 1;
             Destroy(starHit.collider.gameObject);
             var potato = FindObjectOfType<Potato>();
@@ -374,12 +389,14 @@ public class Worm : MonoBehaviour
         switch(reason)
         {
             case DeathReason.Lifetime:
-                info = "Tato starved  :(";
-                hint = "Keep an eye on the hunger meter and make sure to continuously feed Tato fresh potato.";
+                StarveSound.Play();
+                info = "You let Tato starve :(";
+                hint = "Be sure to continuously feed Tato with fresh potato.";
                 break;
             case DeathReason.Suicide:
-                info = "Tato got hurt :(";
-                hint = "Don't give Tato a chance to bite herself.";
+                HurtSound.Play();
+                info = "You hurt Tato :(";
+                hint = "Don't make Tato bite herself!";
                 break;
             default:
                 throw new NotImplementedException();

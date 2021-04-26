@@ -193,10 +193,10 @@ MonoBehaviour:
     m_HorizontalOverflow: 1
     m_VerticalOverflow: 1
     m_LineSpacing: 1
-  m_Text: 'Make sure to post a screenshot of this screen in the Ludum Dare comment
-    section.
+  m_Text: 'Post a screenshot of this screen in the Ludum Dare comment section.
 
-    Can you beat the Ludum Dare community high score?'
+    Can
+    you beat the Ludum Dare community high score?'
 --- !u!222 &12434098
 CanvasRenderer:
   m_ObjectHideFlags: 0
