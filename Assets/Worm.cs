@@ -227,7 +227,7 @@ public class Worm : MonoBehaviour
             }
         }
 
-        if (piecesEaten > 0 && PotatoSound.isPlaying == false)
+        if (piecesEaten > 1 && PotatoSound.isPlaying == false)
         {
             PotatoSound.Play();
         }
