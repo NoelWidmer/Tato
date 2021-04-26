@@ -64,6 +64,9 @@ public class Worm : MonoBehaviour
     private float _timeSinceLastEntering;
     private float _durationOfInvincibility = 1f;
 
+    // eating
+    private List<(float Timestamp, int piecesEaten)> _eatingHistory = new List<(float Timestamp, int piecesEaten)>();
+
     private void Awake()
     {
         if (RemoveBehaviourOnPlay)
@@ -234,7 +237,11 @@ public class Worm : MonoBehaviour
             }
         }
 
-        if (piecesEaten > 1 && PotatoSound.isPlaying == false)
+        _eatingHistory.Add((Time.time, piecesEaten));
+        _eatingHistory.RemoveAll(item => item.Timestamp < Time.time - .25f);
+        var sum = _eatingHistory.Sum(item => item.piecesEaten);
+
+        if (sum > 7 && PotatoSound.isPlaying == false)
         {
             PotatoSound.Play();
         }
