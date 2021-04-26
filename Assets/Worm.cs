@@ -38,7 +38,8 @@ public class Worm : MonoBehaviour
     //lifetime
     public float RemainingLifetimeFraction => 1f / _maxLifetime * _remainingLifetime;
     private static readonly float _maxLifetime = 5f;
-    private static readonly float _lifetimeGainedByPiece = .04f;
+    private static readonly float _lifetimeGainedByPiece = .0365f;
+    private static readonly float _lifetimeMultiplierByChip = 12.5f;
     private float _remainingLifetime = _maxLifetime;
 
     // body parts
@@ -238,7 +239,7 @@ public class Worm : MonoBehaviour
         foreach(var starHit in GetHitsByTag(hits, "Star"))
         {
             ChipSound.Play();
-            AddLifetime(20f);
+            AddLifetime(_lifetimeMultiplierByChip);
             Stars += 1;
             Destroy(starHit.collider.gameObject);
             var potato = FindObjectOfType<Potato>();
