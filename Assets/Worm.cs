@@ -412,11 +412,6 @@ public class Worm : MonoBehaviour
                 throw new NotImplementedException();
         }
 
-        if (Stars > _gameState.HighScore)
-        {
-            _gameState.HighScore = Stars;
-        }
-
         DeathCanvas.SetValues(
             info,
             hint, 

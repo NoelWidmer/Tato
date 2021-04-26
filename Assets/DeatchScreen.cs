@@ -23,20 +23,29 @@ public class DeatchScreen : MonoBehaviour
         RestartButton.onClick.AddListener(OnRestart);
     }
 
-    public void SetValues(string headerText, string hinttext, int starCount, int depth, int length, float time)
+    public void SetValues(string title, string subtitle, int score, int layer, int length, float playtime)
     {
         var gameState = FindObjectOfType<GameState>();
 
-        HeaderText.text = headerText;
-        HintText.text = hinttext;
+        HeaderText.text = title;
+        HintText.text = subtitle;
 
-        var timeSpan = TimeSpan.FromMilliseconds(Mathf.FloorToInt(time * 1000));
+        var timeSpan = TimeSpan.FromMilliseconds(Mathf.FloorToInt(playtime * 1000));
 
-        Score.text = starCount.ToString();
-        HighScore.text = $"Personal Best: {gameState.HighScore}";
+        Score.text = score.ToString();
 
-        RainText.text = (depth - 1).ToString();
-        PotatoText.text = depth.ToString();
+        if (score > gameState.HighScore)
+        {
+            gameState.HighScore = score;
+            HighScore.text = "New High Score!";
+        }
+        else
+        {
+            HighScore.text = $"High Score: {gameState.HighScore}";
+        }
+
+        RainText.text = (layer - 1).ToString();
+        PotatoText.text = layer.ToString();
         LengthText.text = length.ToString();
         TimeText.text = $"{timeSpan.Minutes}m {timeSpan.Seconds}s {timeSpan.Milliseconds}ms";
     }
