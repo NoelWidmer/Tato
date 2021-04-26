@@ -13,6 +13,7 @@ public class Potato : MonoBehaviour
     private Worm _worm;
     private PolygonCollider2D _collider;
     private List<PotatoPiece> _potatoPieces = new List<PotatoPiece>();
+    private int _numberOfChipsCollectedOnCurrentLayer;
 
     private void Awake()
     {
@@ -24,7 +25,6 @@ public class Potato : MonoBehaviour
     private void SetupFirstStage()
     {
         GeneratePotatoPieces();
-        SpawnExit();
         SpawnStar();
     }
 
@@ -120,12 +120,18 @@ public class Potato : MonoBehaviour
             }
         }
 
-        SpawnExit();
+        _numberOfChipsCollectedOnCurrentLayer = 0;
     }
 
-    public void OnStarCollected()
+    public void OnChipCollected()
     {
+        _numberOfChipsCollectedOnCurrentLayer += 1;
         SpawnStar();
+
+        if (_numberOfChipsCollectedOnCurrentLayer == 3)
+        {
+            SpawnExit();
+        }
     }
 
     private void OnDrawGizmos()

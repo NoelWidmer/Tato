@@ -256,7 +256,7 @@ public class Worm : MonoBehaviour
             Stars += 1;
             Destroy(starHit.collider.gameObject);
             var potato = FindObjectOfType<Potato>();
-            potato.OnStarCollected();
+            potato.OnChipCollected();
         }
     }
 
